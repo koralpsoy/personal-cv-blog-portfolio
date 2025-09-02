@@ -151,27 +151,11 @@ DB_PASS=mein_passwort
 DB_CHARSET=utf8mb4
 ```
 
-Lege eine Datei `koralp.env` **eine Ebene über** deinem Projektordner ab (also **nicht** öffentlich erreichbar).
-Beispiel:
-
-* Projekt: `/www/htdocs/XXXXX/deine-domain.de/`
-* ENV:     `/www/htdocs/XXXXX/koralp.env`
-
-Inhalt der `koralp.env`:
-
-```env
-DB_HOST=localhost
-DB_NAME=deine_db
-DB_USER=dein_user
-DB_PASS=dein_passwort
-DB_CHARSET=utf8mb4
-```
-
 5. **Konfiguration prüfen & Site-Infos setzen**
    Die Datei **`config.php`** lädt die `.env` und enthält die **Site-Einstellungen**. Prüfe zwei Dinge:
 
 **a) `.env`-Pfad in `config.php`**
-Wenn du `koralp.env` in **`.env`** umbenannt hast, stelle sicher, dass in `config.php` die richtige Datei geladen wird:
+Stelle sicher, dass in `config.php` die **`.env`** geladen wird:
 
 ```php
 // Lade die .env-Datei, die eine Ebene höher liegt als das aktuelle Verzeichnis
@@ -196,14 +180,15 @@ Passe **`base_url`**, **`site_name`** und **`owner_email`** an **deine** Werte a
 
 > Hinweis: Du kannst diese Werte alternativ auch in die `.env` auslagern (z. B. `SITE_BASE_URL`, `SITE_NAME`, `OWNER_EMAIL`) und dann in `config.php` mit `getenv('...') ?: 'Fallback'` auslesen.
 
+**`config.sample.php` wird nicht mehr verwendet → bitte löschen.**
+
 **Checkliste – Wo muss ich `.env` ggf. noch erwähnen/anpassen?**
 
 * `config.php` → `load_env(__DIR__ . '/../.env')` (Pfad zur Datei)
 * `db.php` → enthält nur die Fehlermeldung; optional Text anpassen, damit dort auch **`.env`** steht (rein kosmetisch)
 
 6. **Admin-Benutzer anlegen (einmalig)**
-   Rufe im Browser `create_admin.php` auf, setze Benutzername/Passwort → danach **Datei löschen**.
-   Rufe im Browser `create_admin.php` auf, setze Benutzername/Passwort → danach **Datei löschen**.
+   Rufe im Browser `https://deine-domain.de/create_admin.php` auf, setze Benutzername/Passwort → danach **Datei löschen** aus dem Verzeichnis.
 
 7. **Login & Inhalte pflegen**
    Öffne `https://deine-domain.de/login.php`, melde dich an und pflege **Timeline, Projekte, Skills, Services, Testimonials und Blogposts**.
@@ -241,7 +226,7 @@ Passe **`base_url`**, **`site_name`** und **`owner_email`** an **deine** Werte a
 └── schema.sql
 
 (außerhalb des Webroots/ eine Ebene höher)
-└── koralp.env
+└── .env
 ```
 
 ---
@@ -258,7 +243,7 @@ Passe **`base_url`**, **`site_name`** und **`owner_email`** an **deine** Werte a
 → SMTP/Server richtig konfiguriert (SPF/DKIM/DMARC)?
 
 **Ich habe die ENV umbenannt. Was muss ich ändern?**
-→ In `config.php` (und evtl. `bootstrap.php`/`db.php`) den Dateinamen/Pfad anpassen; suche nach `koralp.env`.
+→ In `config.php` (und evtl. `bootstrap.php`/`db.php`) den Dateinamen/Pfad anpassen; suche nach `load_env(` oder `'.env'`.
 
 ---
 

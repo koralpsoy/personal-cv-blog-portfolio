@@ -1,0 +1,94 @@
+-- MySQL schema for blog + simple auth
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(60) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS posts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  content MEDIUMTEXT NOT NULL,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Optional: seed example post
+INSERT INTO posts (title, content, created_at) VALUES
+('Willkommen auf meinem Blog', '<p>Das ist ein Beispiel-Beitrag. Viel Spaß beim Schreiben!</p>', NOW());
+
+-- Basiskonfiguration
+CREATE TABLE IF NOT EXISTS settings (
+  setting_key   VARCHAR(100) PRIMARY KEY,
+  setting_value TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS social_links (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(80) NOT NULL,
+  url  VARCHAR(255) NOT NULL,
+  icon VARCHAR(80)  DEFAULT NULL,   -- optional: icon-name
+  sort_order INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Lebenslauf / Timeline
+CREATE TABLE IF NOT EXISTS timeline (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(160) NOT NULL,
+  subtitle VARCHAR(160) DEFAULT NULL,
+  description MEDIUMTEXT,
+  location VARCHAR(160) DEFAULT NULL,
+  start_date DATE DEFAULT NULL,
+  end_date   DATE DEFAULT NULL,
+  sort_order INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Projekte
+CREATE TABLE IF NOT EXISTS projects (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(180) NOT NULL,
+  description MEDIUMTEXT,
+  url VARCHAR(255) DEFAULT NULL,
+  image_url VARCHAR(255) DEFAULT NULL,
+  tags VARCHAR(255) DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  sort_order INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Skills
+CREATE TABLE IF NOT EXISTS skill_categories (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  sort_order INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS skills (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  category_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  level TINYINT DEFAULT 0,          -- 0..100 oder 0..10
+  sort_order INT DEFAULT 0,
+  FOREIGN KEY (category_id) REFERENCES skill_categories(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Services
+CREATE TABLE IF NOT EXISTS services (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(120) NOT NULL,
+  description MEDIUMTEXT,
+  icon VARCHAR(80) DEFAULT NULL,
+  price_from DECIMAL(10,2) DEFAULT NULL,
+  sort_order INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Testimonials
+CREATE TABLE IF NOT EXISTS testimonials (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  author VARCHAR(160) NOT NULL,
+  role   VARCHAR(160) DEFAULT NULL,
+  company VARCHAR(160) DEFAULT NULL,
+  text MEDIUMTEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  sort_order INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

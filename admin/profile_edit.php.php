@@ -40,10 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $delete_stmt = $pdo->prepare("DELETE FROM social_links WHERE id = :id");
             foreach ($_POST['links'] as $link) {
                 $id = $link['id'] ?? 0; $name = trim($link['name'] ?? '');
-                if (isset($link['delete']) && $id) { $delete_stmt->execute([':id' => $id]); } 
+                if (isset($link['delete']) && $id) { $delete_stmt->execute([':id' => $id]); }
                 elseif (!empty($name)) {
                     $params = [':name' => $name, ':value' => trim($link['value'] ?? ''), ':url' => trim($link['url'] ?? ''), ':sort_order' => (int)($link['sort_order'] ?? 0)];
-                    if ($id) { $params[':id'] = $id; $update_stmt->execute($params); } 
+                    if ($id) { $params[':id'] = $id; $update_stmt->execute($params); }
                     else { $insert_stmt->execute($params); }
                 }
             }
@@ -203,11 +203,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Schließen des Icon-Modals
-    document.getElementById('close-icon-modal').addEventListener('click', () => {
-        iconModal.classList.add('hidden');
-        iconModal.classList.remove('flex');
-    });
+    // Schließen des Icon-Modals (X und Overlay)
+    document.getElementById('close-icon-modal').addEventListener('click', closeIconModal);
+    iconModal.addEventListener('click', function(e){ if(e.target === iconModal){ closeIconModal(); } });
+    function closeIconModal(){ iconModal.classList.add('hidden'); iconModal.classList.remove('flex'); activeLinkRow = null; }
 
     // Tab-Wechsel im Icon-Modal
     document.getElementById('icon-tabs').addEventListener('click', function(e) {
@@ -225,22 +224,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Icon-Auswahl im Grid
+    // Icon-Auswahl im Grid (FIX: unterstützt SVG *und* IMG)
     document.getElementById('icon-grids').addEventListener('click', function(e) {
         const iconItem = e.target.closest('.icon-item');
         if (iconItem && activeLinkRow) {
             const iconName = iconItem.dataset.iconName;
+
+            // Hidden input updaten
+            const nameInput = activeLinkRow.querySelector('.icon-name-input[name$="[name]"]');
+            if (nameInput) nameInput.value = iconName;
             
-            // Update hidden input
-            activeLinkRow.querySelector('.icon-name-input[name$="[name]"]').value = iconName;
+            // Preview updaten – svg ODER img akzeptieren
+            const el = iconItem.querySelector('svg, img');
+            const preview = activeLinkRow.querySelector('.icon-preview');
+            if (preview) preview.innerHTML = el ? el.outerHTML : '';
             
-            // Update preview
-            activeLinkRow.querySelector('.icon-preview').innerHTML = iconItem.querySelector('svg').outerHTML;
-            
-            // Close modal
-            iconModal.classList.add('hidden');
-            iconModal.classList.remove('flex');
-            activeLinkRow = null;
+            // Modal schließen
+            closeIconModal();
         }
     });
 
@@ -266,4 +266,3 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
-
